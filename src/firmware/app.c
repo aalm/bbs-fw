@@ -491,7 +491,9 @@ bool apply_throttle(uint8_t* target_current, uint8_t throttle_percent)
 {
 	if ((assist_level_data.level.flags & ASSIST_FLAG_THROTTLE) && throttle_percent > 0 && throttle_ok())
 	{
-		uint8_t current = (uint8_t)MAP16(throttle_percent, 0, 100, g_config.throttle_start_percent, assist_level_data.level.max_throttle_current_percent);
+		// Apply quadratic throttle
+		uint8_t quadratic_throttle = (uint8_t)((throttle_percent * throttle_percent) / 100);
+		uint8_t current = (uint8_t)MAP16(quadratic_throttle, 0, 100, g_config.throttle_start_percent, assist_level_data.level.max_throttle_current_percent);
 
 		// Throttle always overrides PAS if global speed limit is configured for throttle.
 		bool global_throttle_limit_active =
