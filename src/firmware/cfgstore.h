@@ -137,12 +137,12 @@ typedef struct
 extern config_t g_config;
 extern pstate_t g_pstate;
 
-void cfgstore_init();
+void cfgstore_init(void);
 
-bool cfgstore_reset_config();
-bool cfgstore_save_config();
+bool cfgstore_reset_config(void);
+bool cfgstore_save_config(void);
 
-bool cfgstore_reset_pstate();
-bool cfgstore_save_pstate();
+bool cfgstore_reset_pstate(void);
+bool cfgstore_save_pstate(void);
 
 #endif

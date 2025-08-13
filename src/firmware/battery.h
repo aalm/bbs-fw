@@ -11,10 +11,10 @@
 
 #include <stdint.h>
 
-void battery_init();
-void battery_process();
+void battery_init(void);
+void battery_process(void);
 
-uint8_t battery_get_percent();
-uint8_t battery_get_mapped_percent();
+uint8_t battery_get_percent(void);
+uint8_t battery_get_mapped_percent(void);
 
 #endif

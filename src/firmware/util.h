@@ -29,4 +29,3 @@
 #define EXPONENTIAL_FILTER(value, new_value, n)		(value) + ((new_value) - (value)) / (n)		
 
 #endif
-

@@ -75,14 +75,14 @@ bool apply_brake(uint8_t* target_current);
 void apply_current_ramp_up(uint8_t* target_current, bool enable);
 void apply_current_ramp_down(uint8_t* target_current, bool enable);
 
-bool check_power_block();
+bool check_power_block(void);
 void block_power_for(uint16_t ms);
 
-void reload_assist_params();
+void reload_assist_params(void);
 
 uint16_t convert_wheel_speed_kph_to_rpm(uint8_t speed_kph);
 
-void app_init()
+void app_init(void)
 {
 	motor_disable();
 	lights_disable();
@@ -125,7 +125,7 @@ void app_init()
 	}
 }
 
-void app_process()
+void app_process(void)
 {
 	uint8_t target_current = 0;
 	uint8_t target_cadence = assist_level_data.level.max_cadence_percent;
@@ -280,17 +280,17 @@ void app_set_wheel_max_speed_rpm(uint16_t value)
 	}
 }
 
-uint8_t app_get_assist_level()
+uint8_t app_get_assist_level(void)
 {
 	return assist_level;
 }
 
-uint8_t app_get_lights()
+uint8_t app_get_lights(void)
 {
 	return lights_state;
 }
 
-uint8_t app_get_status_code()
+uint8_t app_get_status_code(void)
 {
 	uint16_t motor = motor_status();
 
@@ -346,7 +346,7 @@ uint8_t app_get_status_code()
 	return STATUS_NORMAL;
 }
 
-uint8_t app_get_temperature()
+uint8_t app_get_temperature(void)
 {
 	int8_t temp_max = MAX(temperature_contr_c, temperature_motor_c);
 
@@ -913,7 +913,7 @@ void apply_current_ramp_down(uint8_t* target_current, bool enable)
 }
 
 
-bool check_power_block()
+bool check_power_block(void)
 {
 	if (power_blocked_until_ms != 0)
 	{
@@ -935,7 +935,7 @@ void block_power_for(uint16_t ms)
 	power_blocked_until_ms = system_ms() + ms;
 }
 
-void reload_assist_params()
+void reload_assist_params(void)
 {
 	if (assist_level < ASSIST_PUSH)
 	{

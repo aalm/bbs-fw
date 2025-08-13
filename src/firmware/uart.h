@@ -12,12 +12,12 @@
 #include <stdint.h>
 
 void uart_open(uint32_t baudrate);
-void uart_close();
+void uart_close(void);
 
-uint8_t uart_available();
-uint8_t uart_read();
+uint8_t uart_available(void);
+uint8_t uart_read(void);
 
 void uart_write(uint8_t byte);
-void uart_flush();
+void uart_flush(void);
 
 #endif

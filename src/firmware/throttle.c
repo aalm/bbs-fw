@@ -55,12 +55,12 @@ void throttle_init(uint16_t min_mv, uint16_t max_mv)
 	throttle_hard_limit_hit_at = 0;
 }
 
-bool throttle_ok()
+bool throttle_ok(void)
 {
 	return !throttle_detected || (throttle_low_ok && throttle_hard_ok);
 }
 
-uint8_t throttle_read()
+uint8_t throttle_read(void)
 {
 	static uint8_t throttle_percent = 0;
 
@@ -138,7 +138,6 @@ uint8_t throttle_read()
 
 	return throttle_percent;
 }
-
 
 uint8_t throttle_map_response(uint8_t throttle_percent)
 {

@@ -21,13 +21,13 @@
 #define TIM4_AUTO_RELOAD_PERIOD			99		// 100us
 
 
-void timers_init()
+void timers_init(void)
 {
 	// nothing to do here
 }
 
 
-void timer1_init_motor_pwm()
+void timer1_init_motor_pwm(void)
 {
 	CLK->PCKENR1 |= CLK_PCKENR1_TIM1;
 
@@ -137,7 +137,7 @@ void timer1_init_motor_pwm()
 	TIM1->BKR |= TIM1_BKR_MOE;
 }
 
-void timer2_init_torque_sensor_pwm()
+void timer2_init_torque_sensor_pwm(void)
 {
 	// Timer2 is used to create the pulse signal for excitation of the torque sensor circuit
 	// Timer2 clock = 16MHz; target: 20us period --> 50khz
@@ -160,7 +160,7 @@ void timer2_init_torque_sensor_pwm()
 	TIM2->CR1 |= TIM2_CR1_CEN;
 }
 
-void timer3_init_system()
+void timer3_init_system(void)
 {
 	// enable timer3 clock source
 	CLK->PCKENR1 |= CLK_PCKENR1_TIM3;
@@ -184,7 +184,7 @@ void timer3_init_system()
 	TIM3->CR1 |= TIM3_CR1_CEN;
 }
 
-void timer4_init_sensors()
+void timer4_init_sensors(void)
 {
 	// enable timer4 clock source
 	CLK->PCKENR1 |= CLK_PCKENR1_TIM4;

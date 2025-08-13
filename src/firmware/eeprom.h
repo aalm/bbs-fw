@@ -13,13 +13,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-void eeprom_init();
+void eeprom_init(void);
 bool eeprom_select_page(int page);
 
 int eeprom_read_byte(int offset);
 
-bool eeprom_erase_page();
+bool eeprom_erase_page(void);
 bool eeprom_write_byte(int offset, uint8_t value);
-bool eeprom_end_write();
+bool eeprom_end_write(void);
 
 #endif

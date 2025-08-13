@@ -16,7 +16,7 @@
 
 static uint16_t selected_address;
 
-void eeprom_init()
+void eeprom_init(void)
 {
 	selected_address = EEPROM_START_ADDRESS;
 }
@@ -38,7 +38,7 @@ int eeprom_read_byte(int offset)
 	return *address;
 }
 
-bool eeprom_erase_page()
+bool eeprom_erase_page(void)
 {
 	return true; // not needed
 }
@@ -64,7 +64,7 @@ bool eeprom_write_byte(int offset, uint8_t value)
 	return true;
 }
 
-bool eeprom_end_write()
+bool eeprom_end_write(void)
 {
 	// enable write protection
 	FLASH->IAPSR &= ~FLASH_IAPSR_DUL;

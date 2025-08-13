@@ -23,7 +23,7 @@ static uint16_t adc_battery_voltage_cache;
 static uint16_t adc_torque_cache;
 
 
-void adc_init()
+void adc_init(void)
 {
 	SET_PIN_INPUT(PIN_BATTERY_CURRENT);
 	SET_PIN_INPUT(PIN_BATTERY_VOLTAGE);
@@ -52,7 +52,7 @@ void adc_init()
 	ADC1->CR1 |= ADC1_CR1_ADON;
 }
 
-void adc_process()
+void adc_process(void)
 {
 	// Have to disable interrupts globally since ADC1->CSR register
 	// is manipulated from motor control isr. Very short time, should have no effect.
@@ -63,29 +63,29 @@ void adc_process()
 }
 
 
-uint8_t adc_get_throttle()
+uint8_t adc_get_throttle(void)
 {
 	// atomic read
 	return adc_throttle;
 }
 
-uint16_t adc_get_torque()
+uint16_t adc_get_torque(void)
 {
 	// 10 bit resolution
 	return adc_torque_cache;
 }
 
-uint16_t adc_get_temperature_contr()
+uint16_t adc_get_temperature_contr(void)
 {
 	return 0;
 }
 
-uint16_t adc_get_temperature_motor()
+uint16_t adc_get_temperature_motor(void)
 {
 	return 0;
 }
 
-uint16_t adc_get_battery_voltage()
+uint16_t adc_get_battery_voltage(void)
 {
 	return adc_battery_voltage_cache;
 }

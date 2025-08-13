@@ -16,7 +16,7 @@ void eventlog_init(bool enabled)
 	is_enabled = enabled;
 }
 
-bool eventlog_is_enabled()
+bool eventlog_is_enabled(void)
 {
 	return is_enabled;
 }
@@ -37,6 +37,7 @@ void eventlog_write(uint8_t evt)
 	uart_write(evt);
 	uart_write((uint8_t)0xee + evt);
 }
+
 void eventlog_write_data(uint8_t evt, int16_t data)
 {
 	if (!is_enabled)

@@ -14,26 +14,26 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-void sensors_init();
-void sensors_process();
+void sensors_init(void);
+void sensors_process(void);
 
 void pas_set_stop_delay(uint16_t delay_ms);
-uint16_t pas_get_cadence_rpm_x10();
-uint16_t pas_get_pulse_counter();
-bool pas_is_pedaling_forwards();
-bool pas_is_pedaling_backwards();
+uint16_t pas_get_cadence_rpm_x10(void);
+uint16_t pas_get_pulse_counter(void);
+bool pas_is_pedaling_forwards(void);
+bool pas_is_pedaling_backwards(void);
 
 void speed_sensor_set_signals_per_rpm(uint8_t num_signals);
-bool speed_sensor_is_moving();
-uint16_t speed_sensor_get_rpm_x10();
+bool speed_sensor_is_moving(void);
+uint16_t speed_sensor_get_rpm_x10(void);
 
-uint16_t torque_sensor_get_nm_x100();
-bool torque_sensor_ok();
+uint16_t torque_sensor_get_nm_x100(void);
+bool torque_sensor_ok(void);
 
-int16_t temperature_contr_x100();
-int16_t temperature_motor_x100();
+int16_t temperature_contr_x100(void);
+int16_t temperature_motor_x100(void);
 
-bool brake_is_activated();
-bool shift_sensor_is_activated();
+bool brake_is_activated(void);
+bool shift_sensor_is_activated(void);
 
 #endif

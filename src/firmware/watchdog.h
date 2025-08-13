@@ -13,10 +13,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-void watchdog_init();
-void watchdog_yeild();
+void watchdog_init(void);
+void watchdog_yeild(void);
 
-bool watchdog_triggered();
+bool watchdog_triggered(void);
 
 #endif
-

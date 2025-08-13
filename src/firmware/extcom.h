@@ -9,8 +9,7 @@
 #ifndef _EXTCOM_H_
 #define _EXTCOM_H_
 
-void extcom_init();
-void extcom_process();
+void extcom_init(void);
+void extcom_process(void);
 
 #endif
-

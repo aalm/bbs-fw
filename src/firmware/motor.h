@@ -16,25 +16,25 @@
 #define MOTOR_ERROR_CURRENT_SENSE	0x0004
 #define MOTOR_ERROR_POWER_RESET		0x0020
 
-void motor_pre_init();
+void motor_pre_init(void);
 void motor_init(uint16_t max_current_mA, uint8_t lvc_V, int16_t adc_calib_volt_step_offset);
 
-void motor_process();
+void motor_process(void);
 
-void motor_enable();
-void motor_disable();
+void motor_enable(void);
+void motor_disable(void);
 
-uint16_t motor_status();
-uint8_t motor_get_target_speed();
-uint8_t motor_get_target_current();
+uint16_t motor_status(void);
+uint8_t motor_get_target_speed(void);
+uint8_t motor_get_target_current(void);
 
 void motor_set_target_speed(uint8_t percent);
 void motor_set_target_current(uint8_t percent);
 
 int16_t motor_calibrate_battery_voltage(uint16_t actual_voltage_x100);
 
-uint16_t motor_get_battery_lvc_x10();
-uint16_t motor_get_battery_current_x10();
-uint16_t motor_get_battery_voltage_x10();
+uint16_t motor_get_battery_lvc_x10(void);
+uint16_t motor_get_battery_current_x10(void);
+uint16_t motor_get_battery_voltage_x10(void);
 
 #endif

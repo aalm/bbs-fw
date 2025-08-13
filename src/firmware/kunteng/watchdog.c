@@ -12,7 +12,7 @@
 
 static bool triggered;
 
-void watchdog_init()
+void watchdog_init(void)
 {
 	// :TODO: implement if possible, check if reset triggered by watchdog
 	triggered = false;
@@ -25,12 +25,12 @@ void watchdog_init()
 	watchdog_yeild();
 }
 
-void watchdog_yeild()
+void watchdog_yeild(void)
 {
 	IWDG->KR = 0xaa;
 }
 
-bool watchdog_triggered()
+bool watchdog_triggered(void)
 {
 	return triggered;
 }

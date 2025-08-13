@@ -39,7 +39,7 @@ static uint16_t speed_period_counter;
 static bool speed_prev_state;
 static uint8_t speed_ticks_per_rpm;
 
-void sensors_init()
+void sensors_init(void)
 {
 	pas_period_counter = 0;
 	pas_pulse_counter = 0;
@@ -63,11 +63,11 @@ void sensors_init()
 	timer4_init_sensors();
 }
 
-void sensors_process()
+void sensors_process(void)
 {
 }
 
-bool torque_sensor_ok()
+bool torque_sensor_ok(void)
 {
 	return true;
 }
@@ -77,7 +77,7 @@ void pas_set_stop_delay(uint16_t delay_ms)
 	pas_stop_delay_periods = delay_ms * 10;
 }
 
-uint16_t pas_get_cadence_rpm_x10()
+uint16_t pas_get_cadence_rpm_x10(void)
 {
 	uint16_t tmp;
 	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupt
@@ -94,7 +94,7 @@ uint16_t pas_get_cadence_rpm_x10()
 	}
 }
 
-uint16_t pas_get_pulse_counter()
+uint16_t pas_get_pulse_counter(void)
 {
 	uint16_t tmp;
 	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupts
@@ -104,7 +104,7 @@ uint16_t pas_get_pulse_counter()
 	return tmp;
 }
 
-bool pas_is_pedaling_forwards()
+bool pas_is_pedaling_forwards(void)
 {
 	uint16_t period_length;
 	uint8_t direction_backward;
@@ -117,7 +117,7 @@ bool pas_is_pedaling_forwards()
 	return period_length > 0 && !direction_backward;
 }
 
-bool pas_is_pedaling_backwards()
+bool pas_is_pedaling_backwards(void)
 {
 	uint16_t period_length;
 	uint8_t direction_backward;
@@ -134,7 +134,7 @@ void speed_sensor_set_signals_per_rpm(uint8_t num_signals)
 	speed_ticks_per_rpm = num_signals;
 }
 
-bool speed_sensor_is_moving()
+bool speed_sensor_is_moving(void)
 {
 	uint16_t tmp;
 	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupts
@@ -144,7 +144,7 @@ bool speed_sensor_is_moving()
 	return tmp > 0;
 }
 
-uint16_t speed_sensor_get_rpm_x10()
+uint16_t speed_sensor_get_rpm_x10(void)
 {
 	uint16_t tmp;
 	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupts
@@ -160,23 +160,23 @@ uint16_t speed_sensor_get_rpm_x10()
 }
 
 
-int16_t temperature_contr_x100()
+int16_t temperature_contr_x100(void)
 {
 	return 0; // n/a
 }
 
-int16_t temperature_motor_x100()
+int16_t temperature_motor_x100(void)
 {
 	return 0; // n/a
 }
 
 
-bool brake_is_activated()
+bool brake_is_activated(void)
 {
 	return !GET_PIN_INPUT_STATE(PIN_BRAKE);
 }
 
-bool shift_sensor_is_activated()
+bool shift_sensor_is_activated(void)
 {
 	return false; // n/a
 }

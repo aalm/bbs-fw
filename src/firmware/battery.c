@@ -46,7 +46,7 @@ For example, if the maximum battery voltage is 58.8V and the low cutoff voltage 
 - Full LVC limiting will occur at 0% SOC, so: 43.3V
 */
 
-static uint8_t compute_battery_percent()
+static uint8_t compute_battery_percent(void)
 {
 	int16_t value_x100v = motor_get_battery_voltage_x10() * 10l;
 	int16_t percent = (int16_t)MAP32(value_x100v, battery_empty_x100v, battery_full_x100v, 0, 100);
@@ -93,8 +93,7 @@ static uint8_t map_percent_sw102(uint8_t percent)
 }
 #endif
 
-
-void battery_init()
+void battery_init(void)
 {
 	// default to 70% until first reading is available
 	battery_percent = 70;
@@ -114,7 +113,7 @@ void battery_init()
 		((BATTERY_EMPTY_OFFSET_PERCENT * battery_range_x100v) / 100);
 }
 
-void battery_process()
+void battery_process(void)
 {
 	if (!first_reading_done)
 	{
@@ -144,12 +143,12 @@ void battery_process()
 	}
 }
 
-uint8_t battery_get_percent()
+uint8_t battery_get_percent(void)
 {
 	return battery_percent;
 }
 
-uint8_t battery_get_mapped_percent()
+uint8_t battery_get_mapped_percent(void)
 {
 #if (BATTERY_PERCENT_MAP == BATTERY_PERCENT_MAP_SW102)
 	return map_percent_sw102(battery_percent);

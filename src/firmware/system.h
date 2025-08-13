@@ -21,10 +21,9 @@
 #include "kunteng/cpu.h"
 #endif
 
-void system_init();
+void system_init(void);
 
-uint32_t system_ms();
+uint32_t system_ms(void);
 void system_delay_ms(uint16_t ms);
 
 #endif
-

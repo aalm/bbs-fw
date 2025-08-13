@@ -71,7 +71,7 @@ void uart_open(uint32_t baudrate)
 	UART2->CR2 |= UART2_CR2_RIEN;
 }
 
-void uart_close()
+void uart_close(void)
 {
 	UART2->BRR2 = 0x00;
 	UART2->BRR1 = 0x00;
@@ -81,12 +81,12 @@ void uart_close()
 	UART2->CR3 = 0x00;
 }
 
-uint8_t uart_available()
+uint8_t uart_available(void)
 {
 	return (RX1_BUFFER_SIZE + rx1_head - rx1_tail) & RX1_BUFFER_MASK;
 }
 
-uint8_t uart_read()
+uint8_t uart_read(void)
 {
 	uint8_t byte = rx1_buf[rx1_tail];
 	rx1_tail = (rx1_tail + 1) & RX1_BUFFER_MASK;
@@ -121,7 +121,7 @@ void uart_write(uint8_t byte)
 	tx1_head = i;
 }
 
-void uart_flush()
+void uart_flush(void)
 {
 	while (tx1_sending);
 }

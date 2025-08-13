@@ -54,9 +54,9 @@
 #define STATUS_ERROR_COMMUNICATION			0x30 // n/a
 
 
-void app_init();
+void app_init(void);
 
-void app_process();
+void app_process(void);
 
 void app_set_assist_level(uint8_t level);
 void app_set_lights(bool on);
@@ -64,9 +64,9 @@ void app_set_lights(bool on);
 void app_set_operation_mode(uint8_t mode);
 void app_set_wheel_max_speed_rpm(uint16_t value);
 
-uint8_t app_get_assist_level();
-uint8_t app_get_lights();
-uint8_t app_get_status_code();
-uint8_t app_get_temperature();
+uint8_t app_get_assist_level(void);
+uint8_t app_get_lights(void);
+uint8_t app_get_status_code(void);
+uint8_t app_get_temperature(void);
 
 #endif

@@ -13,10 +13,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-void lights_init();
+void lights_init(void);
 
-void lights_enable();
-void lights_disable();
+void lights_enable(void);
+void lights_disable(void);
 
 void lights_set(bool on);
 

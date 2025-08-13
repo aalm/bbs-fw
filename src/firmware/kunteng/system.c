@@ -18,7 +18,7 @@
 
 static volatile uint32_t	_ms;
 
-void system_init()
+void system_init(void)
 {
 	CLK->CKDIVR = 0x00;	// Set 16MHz
 	while ((CLK->ICKR & CLK_ICKR_HSIRDY) == 0); // Wait for stable clock
@@ -31,7 +31,7 @@ void system_init()
 	enableInterrupts();
 }
 
-uint32_t system_ms()
+uint32_t system_ms(void)
 {
 	uint32_t val;
 	uint8_t ier = TIM3->IER;

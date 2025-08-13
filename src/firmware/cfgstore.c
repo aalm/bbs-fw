@@ -47,15 +47,15 @@ pstate_t g_pstate;
 static uint8_t read(uint8_t page, uint8_t version, uint8_t* dst, uint8_t size);
 static uint8_t write(uint8_t page, uint8_t version, uint8_t* src, uint8_t size);
 
-static bool read_config();
-static bool write_config();
-static void load_default_config();
+static bool read_config(void);
+static bool write_config(void);
+static void load_default_config(void);
 
-static bool read_pstate();
-static bool write_pstate();
-static void load_default_pstate();
+static bool read_pstate(void);
+static bool write_pstate(void);
+static void load_default_pstate(void);
 
-void cfgstore_init()
+void cfgstore_init(void)
 {
 	if (!read_config())
 	{
@@ -68,7 +68,7 @@ void cfgstore_init()
 	}
 }
 
-bool cfgstore_reset_config()
+bool cfgstore_reset_config(void)
 {
 	load_default_config();
 	if (write_config())
@@ -80,23 +80,23 @@ bool cfgstore_reset_config()
 	return false;
 }
 
-bool cfgstore_save_config()
+bool cfgstore_save_config(void)
 {
 	return write_config();
 }
 
-bool cfgstore_reset_pstate()
+bool cfgstore_reset_pstate(void)
 {
 	load_default_pstate();
 	return write_pstate();
 }
 
-bool cfgstore_save_pstate()
+bool cfgstore_save_pstate(void)
 {
 	return write_pstate();
 }
 
-static bool read_config()
+static bool read_config(void)
 {
 	eventlog_write(EVT_MSG_CONFIG_READ_BEGIN);
 
@@ -121,7 +121,7 @@ static bool read_config()
 	return res == EEPROM_OK;
 }
 
-static bool write_config()
+static bool write_config(void)
 {
 	eventlog_write(EVT_MSG_CONFIG_WRITE_BEGIN);
 
@@ -142,7 +142,7 @@ static bool write_config()
 	return res == EEPROM_OK;
 }
 
-static void load_default_config()
+static void load_default_config(void)
 {
 	g_config.use_freedom_units = 0;
 
@@ -218,7 +218,7 @@ static void load_default_config()
 	}
 }
 
-static bool read_pstate()
+static bool read_pstate(void)
 {
 	eventlog_write(EVT_MSG_PSTATE_READ_BEGIN);
 
@@ -243,7 +243,7 @@ static bool read_pstate()
 	return res == EEPROM_OK;
 }
 
-static bool write_pstate()
+static bool write_pstate(void)
 {
 	eventlog_write(EVT_MSG_PSTATE_WRITE_BEGIN);
 
@@ -265,7 +265,7 @@ static bool write_pstate()
 
 }
 
-static void load_default_pstate()
+static void load_default_pstate(void)
 {
 	g_pstate.adc_voltage_calibration_steps_x100_i16l = 0;
 	g_pstate.adc_voltage_calibration_steps_x100_i16h = 0;

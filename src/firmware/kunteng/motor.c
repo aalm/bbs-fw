@@ -193,7 +193,7 @@ static uint8_t target_current_percent = 0;
 static uint16_t adc_steps_per_volt_x512 = ADC_10BIT_STEPS_PER_VOLT_X512;
 
 
-static void flash_opt2_afr5()
+static void flash_opt2_afr5(void)
 {
 	// verify if PWM N channels are active on option bytes, if not, enable
 	static const uint8_t Value = 0x20;
@@ -228,7 +228,7 @@ static void flash_opt2_afr5()
 	}
 }
 
-static void read_battery_voltage()
+static void read_battery_voltage(void)
 {
 	// low pass filter the voltage readed value, to avoid possible fast spikes/noise
 	adc_battery_voltage_accumulated -= adc_battery_voltage_accumulated >> BATTERY_VOLTAGE_FILTER_COEFFICIENT;
@@ -238,7 +238,7 @@ static void read_battery_voltage()
 	is_lvc_triggered = (adc_battery_voltage_filtered < adc_low_voltage_limit);
 }
 
-static void read_battery_current()
+static void read_battery_current(void)
 {
 	// low pass filter the positive battery readed value (no regen current), to avoid possible fast spikes/noise
 	adc_battery_current_accumulated -= adc_battery_current_accumulated >> BATTERY_CURRENT_FILTER_COEFFICIENT;
@@ -246,7 +246,7 @@ static void read_battery_current()
 	adc_battery_current_filtered = adc_battery_current_accumulated >> BATTERY_CURRENT_FILTER_COEFFICIENT;
 }
 
-static void read_phase_current()
+static void read_phase_current(void)
 {
 	// low pass filter the positive motor pahse value (no regen current), to avoid possible fast spikes/noise
 	adc_phase_current_accumulated -= adc_phase_current_accumulated >> PHASE_CURRENT_FILTER_COEFFICIENT;
@@ -272,7 +272,7 @@ static uint8_t asin_table(uint8_t inverted_angle_x128)
 	return index--;
 }
 
-static void compute_foc_angle()
+static void compute_foc_angle(void)
 {
 	uint16_t ui16_temp;
 	uint32_t ui32_temp;
@@ -343,7 +343,7 @@ static void compute_foc_angle()
 }
 
 
-void motor_pre_init()
+void motor_pre_init(void)
 {
 	SET_PIN_INPUT(PIN_HALL_SENSOR_A);
 	SET_PIN_INPUT(PIN_HALL_SENSOR_B);
@@ -388,7 +388,7 @@ void motor_init(uint16_t max_current_mA, uint8_t lvc_V, int16_t adc_calib_volt_s
 	motor_disable();
 }
 
-void motor_process()
+void motor_process(void)
 {
 	read_battery_voltage();
 	read_battery_current();
@@ -397,7 +397,7 @@ void motor_process()
 }
 
 
-void motor_enable()
+void motor_enable(void)
 {
 	if (control_state == CONTROL_STATE_DISABLE)
 	{
@@ -405,12 +405,12 @@ void motor_enable()
 	}
 }
 
-void motor_disable()
+void motor_disable(void)
 {
 	control_state = CONTROL_STATE_DISABLE;
 }
 
-uint16_t motor_status()
+uint16_t motor_status(void)
 {
 	static uint16_t last_status = 0;
 
@@ -430,12 +430,12 @@ uint16_t motor_status()
 	return status;
 }
 
-uint8_t motor_get_target_speed()
+uint8_t motor_get_target_speed(void)
 {
 	return target_speed_percent;
 }
 
-uint8_t motor_get_target_current()
+uint8_t motor_get_target_current(void)
 {
 	return target_current_percent;
 }
@@ -503,17 +503,17 @@ int16_t motor_calibrate_battery_voltage(uint16_t actual_voltage_x100)
 }
 
 
-uint16_t motor_get_battery_lvc_x10()
+uint16_t motor_get_battery_lvc_x10(void)
 {
 	return lvc_x10V;
 }
 
-uint16_t motor_get_battery_current_x10()
+uint16_t motor_get_battery_current_x10(void)
 {
 	return (uint16_t)((((uint32_t)adc_battery_current_filtered * 10) * ADC_10BIT_CURRENT_PER_ADC_STEP_X512) >> 9);
 }
 
-uint16_t motor_get_battery_voltage_x10()
+uint16_t motor_get_battery_voltage_x10(void)
 {
 	return (uint16_t)(((uint32_t)adc_battery_voltage_filtered * 5120) / adc_steps_per_volt_x512);
 }

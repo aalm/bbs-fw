@@ -13,7 +13,7 @@
 static bool lights_enabled;
 static bool lights_on;
 
-void lights_init()
+void lights_init(void)
 {
 	SET_PIN_OUTPUT(PIN_LIGHTS);
 
@@ -21,13 +21,13 @@ void lights_init()
 	lights_set(false);
 }
 
-void lights_enable()
+void lights_enable(void)
 {
 	lights_enabled = true;
 	lights_set(lights_on);
 }
 
-void lights_disable()
+void lights_disable(void)
 {
 	lights_enabled = false;
 	lights_set(lights_on);
