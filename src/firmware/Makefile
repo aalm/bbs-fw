@@ -10,6 +10,7 @@ endif
 #TARGET_CONTROLLER = BBSHD
 #TARGET_CONTROLLER = BBS02
 #TARGET_CONTROLLER = TSDZ2
+#TARGET_CONTROLLER = KUNTENG
 
 # Compiler
 CC = sdcc
@@ -20,7 +21,7 @@ TARGET = bbs-fw
 MAINSRC = main.c
 SUBDIRS = 
 		
-CFLAGS = -Ddouble=float --std-c99 -D$(TARGET_CONTROLLER)
+CFLAGS = -Ddouble=float --std-sdcc23 -D$(TARGET_CONTROLLER)
 	
 # Target Specific
 ifeq ($(TARGET_CONTROLLER), BBSHD)
@@ -38,6 +39,10 @@ ifeq ($(TARGET_CONTROLLER), TSDZ2)
 	SUBDIRS += tsdz2
 endif
 
+ifeq ($(TARGET_CONTROLLER), KUNTENG)
+	CFLAGS += -mstm8 --opt-code-speed
+	SUBDIRS += kunteng
+endif
 
 	
 INCS = $(wildcard *.h $(foreach fd, $(SUBDIRS), $(fd)/*.h))
@@ -63,7 +68,7 @@ echo:
 precheck:
 ifndef TARGET_CONTROLLER
 	$(info TARGET_CONTROLLER is not specified.)
-	$(info Set to one of [BBSHD, BBS02, TSDZ2])
+	$(info Set to one of [BBSHD, BBS02, TSDZ2, KUNTENG])
 	$(info Example:)
 	$(info $(null)  make all TARGET_CONTROLLER=BBSHD)
 	$(error )
@@ -79,19 +84,19 @@ endif
 
 clean:
 ifeq ($(UNAME), Linux)
-	@rm -f bbsx/*.hex tsdz2/*.hex *.hex
-	@rm -f bbsx/*.ihx tsdz2/*.ihx *.ihx
-	@rm -f bbsx/*.asm tsdz2/*.asm *.asm
-	@rm -f bbsx/*.rel tsdz2/*.rel *.rel
-	@rm -f bbsx/*.lk  tsdz2/*.lk  *.lk
-	@rm -f bbsx/*.lst tsdz2/*.lst *.lst
-	@rm -f bbsx/*.rst tsdz2/*.rst *.rst
-	@rm -f bbsx/*.sym tsdz2/*.sym *.sym
-	@rm -f bbsx/*.cdb tsdz2/*.cdb *.cdb
-	@rm -f bbsx/*.map tsdz2/*.map *.map
-	@rm -f bbsx/*.elf tsdz2/*.elf *.elf
-	@rm -f bbsx/*.adb tsdz2/*.adb *.adb
-	@rm -f bbsx/*.mem tsdz2/*.mem *.mem
+	@rm -f bbsx/*.hex tsdz2/*.hex kunteng/*.hex *.hex
+	@rm -f bbsx/*.ihx tsdz2/*.ihx kunteng/*.ihx *.ihx
+	@rm -f bbsx/*.asm tsdz2/*.asm kunteng/*.asm *.asm
+	@rm -f bbsx/*.rel tsdz2/*.rel kunteng/*.rel *.rel
+	@rm -f bbsx/*.lk  tsdz2/*.lk  kunteng/*.lk  *.lk
+	@rm -f bbsx/*.lst tsdz2/*.lst kunteng/*.lst *.lst
+	@rm -f bbsx/*.rst tsdz2/*.rst kunteng/*.rst *.rst
+	@rm -f bbsx/*.sym tsdz2/*.sym kunteng/*.sym *.sym
+	@rm -f bbsx/*.cdb tsdz2/*.cdb kunteng/*.cdb *.cdb
+	@rm -f bbsx/*.map tsdz2/*.map kunteng/*.map *.map
+	@rm -f bbsx/*.elf tsdz2/*.elf kunteng/*.elf *.elf
+	@rm -f bbsx/*.adb tsdz2/*.adb kunteng/*.adb *.adb
+	@rm -f bbsx/*.mem tsdz2/*.mem kunteng/*.mem *.mem
 else
 	@cmd /C clean.bat
 endif

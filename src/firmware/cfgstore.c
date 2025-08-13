@@ -150,6 +150,8 @@ static void load_default_config()
 	g_config.max_current_amps = 30;
 #elif defined(BBS02)
 	g_config.max_current_amps = 25;
+#elif defined(KUNTENG)
+	g_config.max_current_amps = 10;
 #else
 	g_config.max_current_amps = 20;
 #endif

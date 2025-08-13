@@ -39,6 +39,8 @@
 #elif defined(BBSHD)
 	// Measured on BBSHD at 48V
 	#define MAX_CADENCE_RPM_X10					1680
+#elif defined(KUNTENG)
+	#define MAX_CADENCE_RPM_X10					1200
 #else
 	#define MAX_CADENCE_RPM_X10					1200
 #endif
@@ -47,6 +49,8 @@
 	#define PAS_PULSES_REVOLUTION				24
 #elif defined(TSDZ2)
 	#define PAS_PULSES_REVOLUTION				20
+#elif defined(KUNTENG)
+	#define PAS_PULSES_REVOLUTION				6/* XXX */
 #endif
 
  // Applied to both motor and controller tmeperature sensor
@@ -164,6 +168,8 @@
 #ifndef DISPLAY_RANGE_FIELD_DATA
 	#if HAS_CONTROLLER_TEMP_SENSOR || HAS_MOTOR_TEMP_SENSOR
 	#define DISPLAY_RANGE_FIELD_DATA		DISPLAY_RANGE_FIELD_TEMPERATURE
+	#elif HAS_TORQUE_SENSOR
+	#define DISPLAY_RANGE_FIELD_DATA		DISPLAY_RANGE_FIELD_POWER
 	#else
 	#define DISPLAY_RANGE_FIELD_DATA		DISPLAY_RANGE_FIELD_POWER
 	#endif

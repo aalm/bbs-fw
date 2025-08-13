@@ -20,6 +20,8 @@
 	#define CTRL_TYPE		2
 #elif defined(TSDZ2)
 	#define CTRL_TYPE		3
+#elif defined(KUNTENG)
+	#define CTRL_TYPE		4
 #else
 	#define CTRL_TYPE		0
 #endif

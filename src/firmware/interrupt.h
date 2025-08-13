@@ -14,6 +14,8 @@
 #include "bbsx/interrupt.h"
 #elif defined(TSDZ2)
 #include "tsdz2/interrupt.h"
+#elif defined(KUNTENG)
+#include "kunteng/interrupt.h"
 #endif
 
 #endif

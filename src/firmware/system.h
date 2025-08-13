@@ -17,6 +17,8 @@
 #include "bbsx/cpu.h"
 #elif defined(TSDZ2)
 #include "tsdz2/cpu.h"
+#elif defined(KUNTENG)
+#include "kunteng/cpu.h"
 #endif
 
 void system_init();
