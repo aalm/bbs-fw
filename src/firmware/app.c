@@ -625,6 +625,7 @@ bool apply_speed_limit(uint8_t* target_current, uint8_t throttle_percent, bool p
 
 bool apply_thermal_limit(uint8_t* target_current)
 {
+#if /* XXX */0
 	static uint32_t next_log_temp_ms = 10000;
 
 	static bool temperature_limiting = false;
@@ -679,7 +680,7 @@ bool apply_thermal_limit(uint8_t* target_current)
 			eventlog_write_data(EVT_DATA_THERMAL_LIMITING, 0);
 		}
 	}
-
+#endif
 	return false;
 }
 

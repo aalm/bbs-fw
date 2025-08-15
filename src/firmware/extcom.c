@@ -29,52 +29,52 @@
 
 
 #define BUFFER_SIZE			192
-#define DISCARD_TIMEOUT_MS	50
+#define DISCARD_TIMEOUT_MS		50
 
-#define REQUEST_TYPE_READ						0x01
-#define REQUEST_TYPE_WRITE						0x02
+#define REQUEST_TYPE_READ			0x01
+#define REQUEST_TYPE_WRITE			0x02
 
-#define REQUEST_TYPE_BAFANG_READ				0x11
-#define REQUEST_TYPE_BAFANG_WRITE				0x16
+#define REQUEST_TYPE_BAFANG_READ		0x11
+#define REQUEST_TYPE_BAFANG_WRITE		0x16
 
 
-// Firmware config tool communication
-#define OPCODE_READ_FW_VERSION					0x01
-#define OPCODE_READ_EVTLOG_ENABLE				0x02
-#define OPCODE_READ_CONFIG						0x03
-#define OPCODE_READ_STATUS						0x04
+/* Firmware config tool communication */
+#define OPCODE_READ_FW_VERSION			0x01
+#define OPCODE_READ_EVTLOG_ENABLE		0x02
+#define OPCODE_READ_CONFIG			0x03
+#define OPCODE_READ_STATUS			0x04
 
-#define OPCODE_WRITE_EVTLOG_ENABLE				0xf0
-#define OPCODE_WRITE_CONFIG						0xf1
-#define OPCODE_WRITE_RESET_CONFIG				0xf2
+#define OPCODE_WRITE_EVTLOG_ENABLE		0xf0
+#define OPCODE_WRITE_CONFIG			0xf1
+#define OPCODE_WRITE_RESET_CONFIG		0xf2
 #define OPCODE_WRITE_ADC_VOLTAGE_CALIBRATION	0xf3
 
 
-// Bafang display communication
-#define OPCODE_BAFANG_DISPLAY_READ_STATUS		0x08
-#define OPCODE_BAFANG_DISPLAY_READ_CURRENT		0x0a
-#define OPCODE_BAFANG_DISPLAY_READ_BATTERY		0x11
-#define OPCODE_BAFANG_DISPLAY_READ_SPEED		0x20
-#define OPCODE_BAFANG_DISPLAY_READ_UNKNOWN1		0x21
-#define OPCODE_BAFANG_DISPLAY_READ_RANGE		0x22
-#define OPCODE_BAFANG_DISPLAY_READ_CALORIES		0x24
-#define OPCODE_BAFANG_DISPLAY_READ_UNKNOWN3		0x25
-#define OPCODE_BAFANG_DISPLAY_READ_MOVING		0x31
+/* Bafang display communication */
+#define OPCODE_BAFANG_DISPLAY_READ_STATUS	0x08
+#define OPCODE_BAFANG_DISPLAY_READ_CURRENT	0x0a
+#define OPCODE_BAFANG_DISPLAY_READ_BATTERY	0x11
+#define OPCODE_BAFANG_DISPLAY_READ_SPEED	0x20
+#define OPCODE_BAFANG_DISPLAY_READ_UNKNOWN1	0x21
+#define OPCODE_BAFANG_DISPLAY_READ_RANGE	0x22
+#define OPCODE_BAFANG_DISPLAY_READ_CALORIES	0x24
+#define OPCODE_BAFANG_DISPLAY_READ_UNKNOWN3	0x25
+#define OPCODE_BAFANG_DISPLAY_READ_MOVING	0x31
 
-#define OPCODE_BAFANG_DISPLAY_WRITE_PAS			0x0b
-#define OPCODE_BAFANG_DISPLAY_WRITE_MODE		0x0c
-#define OPCODE_BAFANG_DISPLAY_WRITE_LIGHTS		0x1a
+#define OPCODE_BAFANG_DISPLAY_WRITE_PAS		0x0b
+#define OPCODE_BAFANG_DISPLAY_WRITE_MODE	0x0c
+#define OPCODE_BAFANG_DISPLAY_WRITE_LIGHTS	0x1a
 #define OPCODE_BAFANG_DISPLAY_WRITE_SPEED_LIM	0x1f
 
-// Bafang config tool communication (not supported, just discard messages)
-#define OPCODE_BAFANG_TOOL_READ_CONNECT			0x51
-#define OPCODE_BAFANG_TOOL_READ_BASIC			0x52
-#define OPCODE_BAFANG_TOOL_READ_PAS				0x53
-#define OPCODE_BAFANG_TOOL_READ_THROTTLE		0x54
+/* Bafang config tool communication (not supported, just discard messages) */
+#define OPCODE_BAFANG_TOOL_READ_CONNECT		0x51
+#define OPCODE_BAFANG_TOOL_READ_BASIC		0x52
+#define OPCODE_BAFANG_TOOL_READ_PAS		0x53
+#define OPCODE_BAFANG_TOOL_READ_THROTTLE	0x54
 
-#define OPCODE_BAFANG_TOOL_WRITE_BASIC			0x52
-#define OPCODE_BAFANG_TOOL_WRITE_PAS			0x53
-#define OPCODE_BAFANG_TOOL_WRITE_THROTTLE		0x54
+#define OPCODE_BAFANG_TOOL_WRITE_BASIC		0x52
+#define OPCODE_BAFANG_TOOL_WRITE_PAS		0x53
+#define OPCODE_BAFANG_TOOL_WRITE_THROTTLE	0x54
 
 
 static uint8_t msg_len;
@@ -101,7 +101,6 @@ static int16_t process_write_config(void);
 static int16_t process_write_reset_config(void);
 static int16_t process_write_adc_voltage_calibration(void);
 
-
 static int16_t process_bafang_display_read_status(void);
 static int16_t process_bafang_display_read_current(void);
 static int16_t process_bafang_display_read_battery(void);
@@ -117,19 +116,22 @@ static int16_t process_bafang_display_write_mode(void);
 static int16_t process_bafang_display_write_lights(void);
 static int16_t process_bafang_display_write_speed_limit(void);
 
-void extcom_init(void)
+void
+extcom_init(void)
 {
 	msg_len = 0;
 	last_recv_ms = 0;
 	discard_until_ms = 0;
 
-	// Bafang standard baud rate
+	/* bafang standard baud rate */
 	uart_open(1200);
 
 
-	// Wait one second for config tool connection.
-	// This is here to that the config tool can enable
-	// the event log before system proceeds with initialization.
+	/*
+	 * wait one second for config tool connection.
+	 * this is here to that the config tool can enable
+	 * the event log before system proceeds with initialization.
+	 */
 	uint32_t end = system_ms() + 1000;
 	while (system_ms() < end)
 	{
@@ -138,86 +140,75 @@ void extcom_init(void)
 	}
 }
 
-void extcom_process(void)
+void
+extcom_process(void)
 {
 	uint32_t now = system_ms();
 
-	while (uart_available())
-	{
-		if (msg_len == BUFFER_SIZE || (discard_until_ms != 0 && now < discard_until_ms))
-		{
-			// communication error, reset
+	while (uart_available()) {
+		if (msg_len == BUFFER_SIZE ||
+		    (discard_until_ms != 0 && now < discard_until_ms)) {
+			/* communication error, reset */
 			msg_len = 0;
 			while (uart_available()) uart_read();
-		}
-		else
-		{
+		} else {
 			msgbuf[msg_len++] = uart_read();
 			last_recv_ms = now;
 			discard_until_ms = 0;
 		}	
 	}
 
-	if (msg_len > 0 && now - last_recv_ms > 100)
-	{
-		// communication error, reset
+	if (msg_len > 0 && now - last_recv_ms > 100) {
+		/* communication error, reset */
 		msg_len = 0;
 	}
 
 	int16_t res = try_process_request();
-	if (res == DISCARD)
-	{
+	if (res == DISCARD) {
 		msg_len = 0;
 		last_recv_ms = 0;
-		// Discard received data for the next DISCARD_TIMEOUT_MS milliseconds
+		/* Discard received data for the next DISCARD_TIMEOUT_MS milliseconds */
 		discard_until_ms = now + DISCARD_TIMEOUT_MS;
 
 		eventlog_write(EVT_ERROR_EXTCOM_DISCARD);
-	}
-	else if (res > 0)
-	{
-		if (res < msg_len)
-		{
-			// will not occur due to request/response communication
+	} else
+	if (res > 0) {
+		if (res < msg_len) {
+			/* will not occur due to request/response communication */
 			memcpy(msgbuf, msgbuf + res, msg_len - res);
 			msg_len -= res;
-		}
-		else
-		{
+		} else {
 			msg_len = 0;
 			last_recv_ms = 0;
 		}
 	}
 }
 
-
-static uint8_t compute_checksum(uint8_t* buf, uint8_t length)
+static uint8_t
+compute_checksum(uint8_t* buf, uint8_t length)
 {
 	uint8_t result = 0;
 
 	for (uint8_t i = 0; i < length; ++i)
-	{
 		result += buf[i];
-	}
-
 	return result;
 }
 
-static void write_uart_and_increment_checksum(uint8_t data, uint8_t* checksum)
+static void
+write_uart_and_increment_checksum(uint8_t data, uint8_t* checksum)
 {
 	*checksum += data;
 	uart_write(data);
 }
 
-static int16_t try_process_request(void)
+static int16_t
+try_process_request(void)
 {
-	if (msg_len < 1)
-	{
-		return KEEP;
-	}
 
-	switch (msgbuf[0])
-	{
+	if (msg_len < 1)
+		return KEEP;
+
+	switch (msgbuf[0]) {
 	case REQUEST_TYPE_READ:
 		return try_process_read_request();
 	case REQUEST_TYPE_WRITE:
@@ -228,18 +219,17 @@ static int16_t try_process_request(void)
 		return try_process_bafang_write_request();
 	}
 
-	return DISCARD; // unknown message
+	return DISCARD; /* unknown message */
 }
 
-static int16_t try_process_read_request(void)
+static int16_t
+try_process_read_request(void)
 {
-	if (msg_len < 2)
-	{
-		return KEEP;
-	}
 
-	switch (msgbuf[1])
-	{
+	if (msg_len < 2)
+		return KEEP;
+
+	switch (msgbuf[1]) {
 	case OPCODE_READ_FW_VERSION:
 		return process_read_fw_version();
 	case OPCODE_READ_EVTLOG_ENABLE:
@@ -253,15 +243,14 @@ static int16_t try_process_read_request(void)
 	return DISCARD;
 }
 
-static int16_t try_process_write_request(void)
+static int16_t
+try_process_write_request(void)
 {
-	if (msg_len < 2)
-	{
-		return KEEP;
-	}
 
-	switch (msgbuf[1])
-	{
+	if (msg_len < 2)
+		return KEEP;
+
+	switch (msgbuf[1]) {
 	case OPCODE_WRITE_EVTLOG_ENABLE:
 		return process_write_evtlog_enable();
 	case OPCODE_WRITE_CONFIG:
@@ -275,15 +264,14 @@ static int16_t try_process_write_request(void)
 	return DISCARD;
 }
 
-static int16_t try_process_bafang_read_request(void)
+static int16_t
+try_process_bafang_read_request(void)
 {
-	if (msg_len < 2)
-	{
-		return KEEP;
-	}
 
-	switch (msgbuf[1])
-	{
+	if (msg_len < 2)
+		return KEEP;
+
+	switch (msgbuf[1]) {
 	case OPCODE_BAFANG_DISPLAY_READ_STATUS:
 		return process_bafang_display_read_status();
 	case OPCODE_BAFANG_DISPLAY_READ_CURRENT:
@@ -307,15 +295,14 @@ static int16_t try_process_bafang_read_request(void)
 	return DISCARD;
 }
 
-static int16_t try_process_bafang_write_request(void)
+static int16_t
+try_process_bafang_write_request(void)
 {
-	if (msg_len < 2)
-	{
-		return KEEP;
-	}
 
-	switch (msgbuf[1])
-	{
+	if (msg_len < 2)
+		return KEEP;
+
+	switch (msgbuf[1]) {
 	case OPCODE_BAFANG_DISPLAY_WRITE_PAS:
 		return process_bafang_display_write_pas();
 	case OPCODE_BAFANG_DISPLAY_WRITE_MODE:
@@ -331,15 +318,14 @@ static int16_t try_process_bafang_write_request(void)
 
 
 
-static int16_t process_read_fw_version(void)
+static int16_t
+process_read_fw_version(void)
 {
-	if (msg_len < 3)
-	{
-		return KEEP;
-	}
 
-	if (compute_checksum(msgbuf, 2) == msgbuf[2])
-	{
+	if (msg_len < 3)
+		return KEEP;
+
+	if (compute_checksum(msgbuf, 2) == msgbuf[2]) {
 		uint8_t checksum = 0;
 		write_uart_and_increment_checksum(REQUEST_TYPE_READ, &checksum);
 		write_uart_and_increment_checksum(OPCODE_READ_FW_VERSION, &checksum);
@@ -349,9 +335,7 @@ static int16_t process_read_fw_version(void)
 		write_uart_and_increment_checksum(CONFIG_VERSION, &checksum);
 		write_uart_and_increment_checksum(CTRL_TYPE, &checksum);
 		uart_write(checksum);
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
@@ -359,23 +343,20 @@ static int16_t process_read_fw_version(void)
 	return 3;
 }
 
-static int16_t process_read_evtlog_enable(void)
+static int16_t
+process_read_evtlog_enable(void)
 {
-	if (msg_len < 3)
-	{
-		return KEEP;
-	}
 
-	if (compute_checksum(msgbuf, 2) == msgbuf[2])
-	{
+	if (msg_len < 3)
+		return KEEP;
+
+	if (compute_checksum(msgbuf, 2) == msgbuf[2]) {
 		uint8_t checksum = 0;
 		write_uart_and_increment_checksum(REQUEST_TYPE_READ, &checksum);
 		write_uart_and_increment_checksum(OPCODE_READ_EVTLOG_ENABLE, &checksum);
 		write_uart_and_increment_checksum((uint8_t)eventlog_is_enabled(), &checksum);
 		uart_write(checksum);
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
@@ -383,15 +364,14 @@ static int16_t process_read_evtlog_enable(void)
 	return 3;
 }
 
-static int16_t process_read_config(void)
+static int16_t
+process_read_config(void)
 {
-	if (msg_len < 3)
-	{
-		return KEEP;
-	}
 
-	if (compute_checksum(msgbuf, 2) == msgbuf[2])
-	{
+	if (msg_len < 3)
+		return KEEP;
+
+	if (compute_checksum(msgbuf, 2) == msgbuf[2]) {
 		uint8_t checksum = 0;
 		write_uart_and_increment_checksum(REQUEST_TYPE_READ, &checksum);
 		write_uart_and_increment_checksum(OPCODE_READ_CONFIG, &checksum);
@@ -399,15 +379,12 @@ static int16_t process_read_config(void)
 		write_uart_and_increment_checksum(sizeof(config_t), &checksum);
 
 		uint8_t* cfg = (uint8_t*)&g_config;
-		for (uint8_t i = 0; i < sizeof(config_t); ++i)
-		{
+		for (uint8_t i = 0; i < sizeof(config_t); ++i) {
 			write_uart_and_increment_checksum(*(cfg + i), &checksum);
 		}
 
 		uart_write(checksum);
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
@@ -415,21 +392,21 @@ static int16_t process_read_config(void)
 	return 3;
 }
 
-static int16_t process_read_status(void)
+static int16_t
+process_read_status(void)
 {
-	// :TODO:
+	/* XXX :TODO: */
 	return 0;
 }
 
-static int16_t process_write_evtlog_enable(void)
+static int16_t
+process_write_evtlog_enable(void)
 {
-	if (msg_len < 4)
-	{
-		return KEEP;
-	}
 
-	if (compute_checksum(msgbuf, 3) == msgbuf[3])
-	{
+	if (msg_len < 4)
+		return KEEP;
+
+	if (compute_checksum(msgbuf, 3) == msgbuf[3]) {
 		eventlog_set_enabled((bool)msgbuf[2]);
 
 		uint8_t checksum = 0;
@@ -437,9 +414,7 @@ static int16_t process_write_evtlog_enable(void)
 		write_uart_and_increment_checksum(OPCODE_WRITE_EVTLOG_ENABLE, &checksum);
 		write_uart_and_increment_checksum(msgbuf[2], &checksum);
 		uart_write(checksum);
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
@@ -447,26 +422,22 @@ static int16_t process_write_evtlog_enable(void)
 	return 4;
 }
 
-static int16_t process_write_config(void)
+static int16_t
+process_write_config(void)
 {
+
 	if (msg_len < 4)
-	{
 		return KEEP;
-	}
 
 	uint8_t version = msgbuf[2];
 	uint8_t length = msgbuf[3];
 
 	if (msg_len < 4 + length + 1)
-	{
 		return KEEP;
-	}
 
-	if (compute_checksum(msgbuf, (uint8_t)(4 + sizeof(config_t))) == msgbuf[4 + sizeof(config_t)])
-	{
+	if (compute_checksum(msgbuf, (uint8_t)(4 + sizeof(config_t))) == msgbuf[4 + sizeof(config_t)]) {
 		bool result = false;
-		if (version == CONFIG_VERSION && length == sizeof(config_t))
-		{
+		if (version == CONFIG_VERSION && length == sizeof(config_t)) {
 			memcpy(&g_config, msgbuf + 4, sizeof(config_t));
 			result = cfgstore_save_config();
 		}
@@ -476,9 +447,7 @@ static int16_t process_write_config(void)
 		write_uart_and_increment_checksum(OPCODE_WRITE_CONFIG, &checksum);
 		write_uart_and_increment_checksum(result, &checksum);
 		uart_write(checksum);
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
@@ -486,15 +455,14 @@ static int16_t process_write_config(void)
 	return 4 + length + 1;
 }
 
-static int16_t process_write_reset_config(void)
+static int16_t
+process_write_reset_config(void)
 {
-	if (msg_len < 3)
-	{
-		return KEEP;
-	}
 
-	if (compute_checksum(msgbuf, 2) == msgbuf[2])
-	{
+	if (msg_len < 3)
+		return KEEP;
+
+	if (compute_checksum(msgbuf, 2) == msgbuf[2]) {
 
 		bool res = cfgstore_reset_config();
 
@@ -503,9 +471,7 @@ static int16_t process_write_reset_config(void)
 		write_uart_and_increment_checksum(OPCODE_WRITE_RESET_CONFIG, &checksum);
 		write_uart_and_increment_checksum((uint8_t)res, &checksum);
 		uart_write(checksum);
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
@@ -513,15 +479,14 @@ static int16_t process_write_reset_config(void)
 	return 3;
 }
 
-static int16_t process_write_adc_voltage_calibration(void)
+static int16_t
+process_write_adc_voltage_calibration(void)
 {
-	if (msg_len < 5)
-	{
-		return KEEP;
-	}
 
-	if (compute_checksum(msgbuf, 4) == msgbuf[4])
-	{
+	if (msg_len < 5)
+		return KEEP;
+
+	if (compute_checksum(msgbuf, 4) == msgbuf[4]) {
 		uint16_t actual_volt_x100 = ((uint16_t)msgbuf[2] << 8) | msgbuf[3];
 
 		int16_t calibration_offset = motor_calibrate_battery_voltage(actual_volt_x100);
@@ -536,9 +501,7 @@ static int16_t process_write_adc_voltage_calibration(void)
 		write_uart_and_increment_checksum(msgbuf[2], &checksum);
 		write_uart_and_increment_checksum(msgbuf[3], &checksum);
 		uart_write(checksum);
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
@@ -547,65 +510,64 @@ static int16_t process_write_adc_voltage_calibration(void)
 }
 
 
-static int16_t process_bafang_display_read_status(void)
+static int16_t
+process_bafang_display_read_status(void)
 {
+
 	if (msg_len < 2)
-	{
 		return KEEP;
-	}
 
 	uart_write(app_get_status_code());
 
 	return 2;
 }
 
-static int16_t process_bafang_display_read_current(void)
+static int16_t
+process_bafang_display_read_current(void)
 {
+
 	if (msg_len < 2)
-	{
 		return KEEP;
-	}
 
 	uint8_t amp_x2 = (uint8_t)((motor_get_battery_current_x10() * 2) / 10);
 
 	uart_write(amp_x2);
-	uart_write(amp_x2); // checksum
+	uart_write(amp_x2); /* checksum */
 
 	return 2;
 }
 
-static int16_t process_bafang_display_read_battery(void)
+static int16_t
+process_bafang_display_read_battery(void)
 {
+
 	if (msg_len < 2)
-	{
 		return KEEP;
-	}
 
 	uint8_t value = battery_get_mapped_percent();
 
 	uart_write(value);
-	uart_write(value); // checksum
+	uart_write(value); /* checksum */
 
 	return 2;
 }
 
-static int16_t process_bafang_display_read_speed(void)
+static int16_t
+process_bafang_display_read_speed(void)
 {
+
 	if (msg_len < 2)
-	{
 		return KEEP;
-	}
 
 	uint16_t speed = 0;
 
-	if (g_config.walk_mode_data_display != WALK_MODE_DATA_SPEED && app_get_assist_level() == ASSIST_PUSH)
-	{
+	if (g_config.walk_mode_data_display != WALK_MODE_DATA_SPEED &&
+	    app_get_assist_level() == ASSIST_PUSH) {
 		uint16_t data = 0;
 
-		switch (g_config.walk_mode_data_display)
-		{
+		switch (g_config.walk_mode_data_display) {
 		case WALK_MODE_DATA_TEMPERATURE:
-			// Keep temperature in C, farenheit would be out of range
+			/* Keep temperature in C, farenheit would be out of range */
 			data = app_get_temperature();
 			break;
 		case WALK_MODE_DATA_REQUESTED_POWER:
@@ -616,57 +578,52 @@ static int16_t process_bafang_display_read_speed(void)
 			break;
 		}
 
-		if (g_config.use_freedom_units)
-		{
-			// Compensate for kph -> mph conversion display will do.
+		if (g_config.use_freedom_units) {
+			/* Compensate for kph -> mph conversion display will do. */
 			data = (data * 161) / 100;
 		}
 
-		// T_kph -> rpm
+		/* T_kph -> rpm */
 		speed = (uint16_t)(25000.f / (3 * 3.14159f * 1.27f * EXPAND_U16(g_config.wheel_size_inch_x10_u16h, g_config.wheel_size_inch_x10_u16l)) * data);
-	}
-	else
-	{
+	} else {
 		speed = speed_sensor_get_rpm_x10() / 10;
 	}
-
 
 	uint8_t checksum = 0;
 
 	write_uart_and_increment_checksum(speed >> 8, &checksum);
 	write_uart_and_increment_checksum((uint8_t)speed, &checksum);
-	uart_write(checksum + (uint8_t)0x20); // weird checksum
+	uart_write(checksum + (uint8_t)0x20); /* weird checksum */
 
 	return 2;
 }
 
-static int16_t process_bafang_display_read_unknown1(void)
+static int16_t
+process_bafang_display_read_unknown1(void)
 {
+
 	if (msg_len < 3)
-	{
 		return KEEP;
-	}
 
 	uart_write(0x00);
 	uart_write(0x00);
-	uart_write(0x00); // checksum
+	uart_write(0x00); /* checksum */
 
 	return 3;
 }
 
-static int16_t process_bafang_display_read_range(void)
+static int16_t
+process_bafang_display_read_range(void)
 {
+
 	if (msg_len < 3)
-	{
 		return KEEP;
-	}
 
 	uint16_t value = 0;
 
 #if DISPLAY_RANGE_FIELD_DATA == DISPLAY_RANGE_FIELD_TEMPERATURE
 	value = app_get_temperature();
-	if (g_config.use_freedom_units)
-	{
+	if (g_config.use_freedom_units) {
 		// Convert to farenheit and compensate for the km -> miles conversion the diplay will do
 		// F_miles = (C * 9/5 + 32) * 161 / 100
 		// Approximistation:
@@ -675,19 +632,15 @@ static int16_t process_bafang_display_read_range(void)
 		value = ((290u * value) + 5050u) / 100u;
 	}
 #elif DISPLAY_RANGE_FIELD_DATA == DISPLAY_RANGE_FIELD_POWER
-	if (app_get_lights())
-	{
+	if (app_get_lights()) {
 		value = motor_get_battery_current_x10();
-	}
-	else
-	{
+	} else {
 		uint16_t max_current_amp_x10 = g_config.max_current_amps * 10;
 		value = MAP32(motor_get_target_current(), 0, 100, 0, max_current_amp_x10);
 	}
 
-	if (g_config.use_freedom_units)
-	{
-		// compensate for km -> miles conversion the display will do
+	if (g_config.use_freedom_units) {
+		/* compensate for km -> miles conversion the display will do */
 		value = (value * 161u) / 100u;
 	}
 #endif
@@ -701,67 +654,63 @@ static int16_t process_bafang_display_read_range(void)
 	return 3;
 }
 
-static int16_t process_bafang_display_read_calories(void)
+static int16_t
+process_bafang_display_read_calories(void)
 {
+
 	if (msg_len < 3)
-	{
 		return KEEP;
-	}
 
 	uint8_t checksum = 0;
-
-	// send battery voltage x10 to show in calories field
+	/* send battery voltage x10 to show in calories field */
 	uint16_t volt = motor_get_battery_voltage_x10();
 
-	write_uart_and_increment_checksum(volt >> 8, & checksum);
-	write_uart_and_increment_checksum(volt & 0xff, & checksum);
-	uart_write(checksum); // checksum
+	write_uart_and_increment_checksum(volt >> 8, &checksum);
+	write_uart_and_increment_checksum(volt & 0xff, &checksum);
+	uart_write(checksum); /* checksum */
 
 	return 3;
 }
 
-static int16_t process_bafang_display_read_unknown3(void)
+static int16_t
+process_bafang_display_read_unknown3(void)
 {
 	if (msg_len < 3)
-	{
 		return KEEP;
-	}
 
 	uart_write(0x00);
 	uart_write(0x00);
 	uart_write(0x00);
 	uart_write(0x00);
-	uart_write(0x00); // checksum
+	uart_write(0x00); /* checksum */
 
 	return 3;
 }
 
-static int16_t process_bafang_display_read_moving(void)
+static int16_t
+process_bafang_display_read_moving(void)
 {
+
 	if (msg_len < 2)
-	{
 		return KEEP;
-	}
 
 	uint8_t data = speed_sensor_is_moving() ? 0x31 : 0x30;
 	uart_write(data);
-	uart_write(data); // checksum
+	uart_write(data); /* checksum */
 
 	return 2;
 }
 
 
-static int16_t process_bafang_display_write_pas(void)
+static int16_t
+process_bafang_display_write_pas(void)
 {
-	if (msg_len < 4)
-	{
-		return KEEP;
-	}
 
-	if (compute_checksum(msgbuf, 3) == msgbuf[3])
-	{
-		switch (msgbuf[2])
-		{
+	if (msg_len < 4)
+		return KEEP;
+
+	if (compute_checksum(msgbuf, 3) == msgbuf[3]) {
+		switch (msgbuf[2]) {
 		case 0x00:
 			app_set_assist_level(ASSIST_0);
 			break;
@@ -796,12 +745,10 @@ static int16_t process_bafang_display_write_pas(void)
 			app_set_assist_level(ASSIST_PUSH);
 			break;
 		default:
-			// Unsupported level, ignore
+			/* Unsupported level, ignore */
 			break;
 		}
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
@@ -809,17 +756,15 @@ static int16_t process_bafang_display_write_pas(void)
 	return 4;
 }
 
-static int16_t process_bafang_display_write_mode(void)
+static int16_t
+process_bafang_display_write_mode(void)
 {
-	if (msg_len < 4)
-	{
-		return KEEP;
-	}
 
-	if (compute_checksum(msgbuf, 3) == msgbuf[3])
-	{
-		switch (msgbuf[2])
-		{
+	if (msg_len < 4)
+		return KEEP;
+
+	if (compute_checksum(msgbuf, 3) == msgbuf[3]) {
+		switch (msgbuf[2]) {
 		case 0x02:
 			app_set_operation_mode(OPERATION_MODE_DEFAULT);
 			break;
@@ -827,12 +772,10 @@ static int16_t process_bafang_display_write_mode(void)
 			app_set_operation_mode(OPERATION_MODE_SPORT);
 			break;
 		default:
-			// Unsupported mode, ignore
+			/* Unsupported mode, ignore */
 			break;
 		}
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
@@ -840,17 +783,16 @@ static int16_t process_bafang_display_write_mode(void)
 	return 4;
 }
 
-static int16_t process_bafang_display_write_lights(void)
+static int16_t
+process_bafang_display_write_lights(void)
 {
+
 	if (msg_len < 3)
-	{
 		return KEEP;
-	}
 
-	// No checksum
+	/* no checksum */
 
-	switch (msgbuf[2])
-	{
+	switch (msgbuf[2]) {
 	case 0xf0:
 		app_set_lights(false);
 		break;
@@ -858,34 +800,31 @@ static int16_t process_bafang_display_write_lights(void)
 		app_set_lights(true);
 		break;
 	default:
-		return DISCARD; // unsupported state, assume communication error
+		return DISCARD; /* unsupported state, assume communication error */
 	}
 
 	return 3;
 }
 
-static int16_t process_bafang_display_write_speed_limit(void)
+static int16_t
+process_bafang_display_write_speed_limit(void)
 {
-	if (msg_len < 5)
-	{
-		return KEEP;
-	}
 
-	/*
-	if (compute_checksum(msgbuf, 4) == msgbuf[4])
-	{
+	if (msg_len < 5)
+		return KEEP;
+
+#if 0
+	if (compute_checksum(msgbuf, 4) == msgbuf[4]) {
 		 // Ignoring speed limit requested by display,
 		 // Global speed limit is configured in firmware config tool.
 		 
 		 uint16_t value = ((msgbuf[2] << 8) | msgbuf[3]);
 		 app_set_wheel_max_speed_rpm(value);
-	}
-	else
-	{
+	} else {
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
-	*/
+#endif
 
 	return 5;
 }

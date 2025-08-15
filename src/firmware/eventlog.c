@@ -11,39 +11,42 @@
 
 static bool is_enabled;
 
-void eventlog_init(bool enabled)
+void
+eventlog_init(bool enabled)
 {
 	is_enabled = enabled;
 }
 
-bool eventlog_is_enabled(void)
+bool
+eventlog_is_enabled(void)
 {
 	return is_enabled;
 }
 
-void eventlog_set_enabled(bool enabled)
+void
+eventlog_set_enabled(bool enabled)
 {
 	is_enabled = enabled;
 }
 
-void eventlog_write(uint8_t evt)
+void
+eventlog_write(uint8_t evt)
 {
+
 	if (!is_enabled)
-	{
 		return;
-	}
 
 	uart_write(0xee);
 	uart_write(evt);
 	uart_write((uint8_t)0xee + evt);
 }
 
-void eventlog_write_data(uint8_t evt, int16_t data)
+void
+eventlog_write_data(uint8_t evt, int16_t data)
 {
+
 	if (!is_enabled)
-	{
 		return;
-	}
 
 	uint8_t checksum = 0;
 

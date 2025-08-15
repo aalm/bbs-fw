@@ -26,7 +26,8 @@
 
 #define APP_PROCESS_INTERVAL_MS		5
 
-void main(void)
+void
+main(void)
 {
 	motor_pre_init();
 
@@ -37,9 +38,8 @@ void main(void)
 	eventlog_init(false);
 	extcom_init();
 
-	if (watchdog_triggered())
-	{
-		// force write watchdog reset to eventlog
+	if (watchdog_triggered()) {
+		/* force write watchdog reset to eventlog */
 		bool prev = eventlog_is_enabled();
 		eventlog_set_enabled(true);
 		eventlog_write(EVT_ERROR_WATCHDOG_TRIGGERED);
@@ -69,15 +69,13 @@ void main(void)
 	app_init();
 
 	uint32_t next_app_proccess = system_ms();
-	while (1)
-	{
+	while (1) {
 		uint32_t now = system_ms();
 	
 		adc_process();
 		motor_process();
 
-		if (now >= next_app_proccess)
-		{
+		if (now >= next_app_proccess) {
 			next_app_proccess = now + APP_PROCESS_INTERVAL_MS;
 
 			battery_process();

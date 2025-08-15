@@ -11,7 +11,6 @@
 
 
 void timer1_init_motor_pwm(void);
-void timer2_init_torque_sensor_pwm(void);
 void timer3_init_system(void);
 void timer4_init_sensors(void);
 

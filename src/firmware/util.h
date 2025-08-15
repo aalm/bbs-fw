@@ -24,8 +24,10 @@
 
 #define CLAMP(x, min, max) (MIN(MAX(x, min), max))
 
-// Low pass filter
-// value + (new_value - value) / n;
+/*
+ * low pass filter
+ * value + (new_value - value) / n;
+ */
 #define EXPONENTIAL_FILTER(value, new_value, n)		(value) + ((new_value) - (value)) / (n)		
 
 #endif

@@ -32,47 +32,8 @@
 /** @addtogroup STM8S_StdPeriph_Driver
   * @{
   */
-  
-/* Uncomment the line below according to the target STM8S or STM8A device used in your
-   application. */
-
- /* #define STM8S208 */      /*!< STM8S High density devices with CAN */
- /* #define STM8S207 */      /*!< STM8S High density devices without CAN */
- /* #define STM8S007 */      /*!< STM8S Value Line High density devices */
- /* #define STM8AF52Ax */    /*!< STM8A High density devices with CAN */
- /* #define STM8AF62Ax */    /*!< STM8A High density devices without CAN */
- /* #define STM8S105 */      /*!< STM8S Medium density devices */
- /* #define STM8S005 */      /*!< STM8S Value Line Medium density devices */
- /* #define STM8AF626x */    /*!< STM8A Medium density devices */
- /* #define STM8AF622x */    /*!< STM8A Low density devices */
- /* #define STM8S103 */      /*!< STM8S Low density devices */
- /* #define STM8S003 */      /*!< STM8S Value Line Low density devices */
- /* #define STM8S903 */      /*!< STM8S Low density devices */
- /* #define STM8S001 */      /*!< STM8S Value Line Low denisty devices */
-
-/*   Tip: To avoid modifying this file each time you need to switch between these
-        devices, you can define the device in your toolchain compiler preprocessor. 
-
-  - High-Density STM8A devices are the STM8AF52xx STM8AF6269/8x/Ax,
-    STM8AF51xx, and STM8AF6169/7x/8x/9x/Ax microcontrollers where the Flash memory
-    density ranges between 32 to 128 Kbytes
-  - Medium-Density STM8A devices are the STM8AF622x/4x, STM8AF6266/68,
-    STM8AF612x/4x, and STM8AF6166/68 microcontrollers where the Flash memory 
-    density ranges between 8 to 32 Kbytes
-  - High-Density STM8S devices are the STM8S207xx, STM8S007 and STM8S208xx microcontrollers
-    where the Flash memory density ranges between 32 to 128 Kbytes.
-  - Medium-Density STM8S devices are the STM8S105x and STM8S005 microcontrollers
-    where the Flash memory density ranges between 16 to 32-Kbytes.
-  - Low-Density STM8A devices are the STM8AF622x microcontrollers where the Flash
-    density is 8 Kbytes. 
-  - Low-Density STM8S devices are the STM8S103xx, STM8S003, STM8S903xx and STM8S001 microcontrollers
-    where the Flash density is 8 Kbytes. */
-
-#if !defined (STM8S208) && !defined (STM8S207) && !defined (STM8S105) && \
-    !defined (STM8S103) && !defined (STM8S903) && !defined (STM8AF52Ax) && \
-    !defined (STM8AF62Ax) && !defined (STM8AF626x) && !defined (STM8S007) && \
-    !defined (STM8S003)&& !defined (STM8S005) && !defined(STM8S001) && !defined (STM8AF622x) 
- #error "Please select first the target STM8S/A device used in your application (in stm8s.h file)"
+#ifndef STM8S105
+#define	STM8S105	/*!< STM8S Medium density devices */
 #endif
 
 /******************************************************************************/
@@ -95,7 +56,7 @@
 /* Comment the line below if you will not use the peripherals drivers.
    In this case, these drivers will not be included and the application code will be
    based on direct access to peripherals registers */
- // #define USE_STDPERIPH_DRIVER
+/*#define USE_STDPERIPH_DRIVER*/
 #endif
 
 /**
@@ -215,6 +176,14 @@
 
 /*!< Integer types  */
 #include <stdint.h>
+
+/*!< STM8 Standard Peripheral Library old types (maintained for legacy purpose) */
+typedef int32_t		s32;
+typedef int16_t		s16;
+typedef int8_t		s8;
+typedef uint32_t	u32;
+typedef uint16_t	u16;
+typedef uint8_t		u8;
 
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus, BitStatus, BitAction;
 

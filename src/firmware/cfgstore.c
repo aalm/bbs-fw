@@ -17,14 +17,14 @@
 #define EEPROM_CONFIG_PAGE		0
 #define EEPROM_PSTATE_PAGE		1
 
-#define EEPROM_OK					0
+#define EEPROM_OK			0
 #define EEPROM_ERROR_SELECT_PAGE	1
-#define EEPROM_ERROR_READ			2
+#define EEPROM_ERROR_READ		2
 #define EEPROM_ERROR_VERSION		3
-#define EEPROM_ERROR_LENGHT			4
+#define EEPROM_ERROR_LENGHT		4
 #define EEPROM_ERROR_CHECKSUM		5
-#define EEPROM_ERROR_ERASE			6
-#define EEPROM_ERROR_WRITE			7
+#define EEPROM_ERROR_ERASE		6
+#define EEPROM_ERROR_WRITE		7
 
 static const uint8_t default_current_limits[] = { 7, 10, 14, 19, 26, 36, 50, 70, 98 };
 
@@ -55,24 +55,23 @@ static bool read_pstate(void);
 static bool write_pstate(void);
 static void load_default_pstate(void);
 
-void cfgstore_init(void)
+void
+cfgstore_init(void)
 {
+
 	if (!read_config())
-	{
 		cfgstore_reset_config();
-	}
 
 	if (!read_pstate())
-	{
 		cfgstore_reset_pstate();
-	}
 }
 
-bool cfgstore_reset_config(void)
+bool
+cfgstore_reset_config(void)
 {
+
 	load_default_config();
-	if (write_config())
-	{
+	if (write_config()) {
 		eventlog_write(EVT_MSG_CONFIG_RESET);
 		return true;
 	}
@@ -80,29 +79,33 @@ bool cfgstore_reset_config(void)
 	return false;
 }
 
-bool cfgstore_save_config(void)
+bool
+cfgstore_save_config(void)
 {
 	return write_config();
 }
 
-bool cfgstore_reset_pstate(void)
+bool
+cfgstore_reset_pstate(void)
 {
 	load_default_pstate();
 	return write_pstate();
 }
 
-bool cfgstore_save_pstate(void)
+bool
+cfgstore_save_pstate(void)
 {
 	return write_pstate();
 }
 
-static bool read_config(void)
+static bool
+read_config(void)
 {
+
 	eventlog_write(EVT_MSG_CONFIG_READ_BEGIN);
 
 	uint8_t res = read(EEPROM_CONFIG_PAGE, CONFIG_VERSION, (uint8_t*)&g_config, sizeof(config_t));
-	switch (res)
-	{
+	switch (res) {
 	default:
 		eventlog_write(EVT_ERROR_EEPROM_READ);
 		break;
@@ -121,13 +124,14 @@ static bool read_config(void)
 	return res == EEPROM_OK;
 }
 
-static bool write_config(void)
+static bool
+write_config(void)
 {
+
 	eventlog_write(EVT_MSG_CONFIG_WRITE_BEGIN);
 
 	uint8_t res = write(EEPROM_CONFIG_PAGE, CONFIG_VERSION, (uint8_t*)&g_config, sizeof(config_t));
-	switch (res)
-	{
+	switch (res) {
 	default:
 		eventlog_write(EVT_ERROR_EEPROM_WRITE);
 		break;
@@ -142,8 +146,10 @@ static bool write_config(void)
 	return res == EEPROM_OK;
 }
 
-static void load_default_config(void)
+static void
+load_default_config(void)
 {
+
 	g_config.use_freedom_units = 0;
 
 #if defined(BBSHD)
@@ -200,8 +206,7 @@ static void load_default_config(void)
 
 	memset(&g_config.assist_levels, 0, 20 * sizeof(assist_level_t));
 
-	for (uint8_t i = 0; i < 9; ++i)
-	{
+	for (uint8_t i = 0; i < 9; ++i) {
 		g_config.assist_levels[0][i+1].flags = ASSIST_FLAG_PAS | ASSIST_FLAG_THROTTLE;
 		g_config.assist_levels[0][i+1].max_cadence_percent = 100;
 		g_config.assist_levels[0][i+1].max_speed_percent = 100;
@@ -218,13 +223,14 @@ static void load_default_config(void)
 	}
 }
 
-static bool read_pstate(void)
+static bool
+read_pstate(void)
 {
+
 	eventlog_write(EVT_MSG_PSTATE_READ_BEGIN);
 
 	uint8_t res = read(EEPROM_PSTATE_PAGE, PSTATE_VERSION, (uint8_t*)&g_pstate, sizeof(pstate_t));
-	switch (res)
-	{
+	switch (res) {
 	default:
 		eventlog_write(EVT_ERROR_EEPROM_READ);
 		break;
@@ -243,13 +249,14 @@ static bool read_pstate(void)
 	return res == EEPROM_OK;
 }
 
-static bool write_pstate(void)
+static bool
+write_pstate(void)
 {
+
 	eventlog_write(EVT_MSG_PSTATE_WRITE_BEGIN);
 
 	uint8_t res = write(EEPROM_PSTATE_PAGE, PSTATE_VERSION, (uint8_t*)&g_pstate, sizeof(pstate_t));
-	switch (res)
-	{
+	switch (res) {
 	default:
 		eventlog_write(EVT_ERROR_EEPROM_WRITE);
 		break;
@@ -262,16 +269,17 @@ static bool write_pstate(void)
 	}
 
 	return res == EEPROM_OK;
-
 }
 
-static void load_default_pstate(void)
+static void
+load_default_pstate(void)
 {
 	g_pstate.adc_voltage_calibration_steps_x100_i16l = 0;
 	g_pstate.adc_voltage_calibration_steps_x100_i16h = 0;
 }
 
-static uint8_t read(uint8_t page, uint8_t version, uint8_t* dst, uint8_t size)
+static uint8_t
+read(uint8_t page, uint8_t version, uint8_t* dst, uint8_t size)
 {
 	uint8_t read_offset = 0;
 	uint8_t* ptr = 0;
@@ -279,13 +287,10 @@ static uint8_t read(uint8_t page, uint8_t version, uint8_t* dst, uint8_t size)
 	int data;
 
 	if (!eeprom_select_page(page))
-	{
 		return EEPROM_ERROR_SELECT_PAGE;
-	}
 
 	ptr = (uint8_t*)&header;
-	for (i = 0; i < sizeof(header_t); ++i)
-	{
+	for (i = 0; i < sizeof(header_t); ++i) {
 		data = eeprom_read_byte(read_offset);
 		if (data < 0)
 		{
@@ -296,27 +301,20 @@ static uint8_t read(uint8_t page, uint8_t version, uint8_t* dst, uint8_t size)
 		++ptr;
 	}
 
-	// verify header ok
+	/* verify header ok */
 	if (header.version != version)
-	{
 		return EEPROM_ERROR_VERSION;
-	}
 
 	if (header.length != size)
-	{
 		return EEPROM_ERROR_LENGHT;
-	}
 
 	uint8_t checksum = 0;
 
 	ptr = dst;
-	for (i = 0; i < size; ++i)
-	{
+	for (i = 0; i < size; ++i) {
 		data = eeprom_read_byte(read_offset);
 		if (data < 0)
-		{
 			return EEPROM_ERROR_READ;
-		}
 
 		checksum += (uint8_t)data;
 		*ptr = (uint8_t)data;
@@ -325,14 +323,13 @@ static uint8_t read(uint8_t page, uint8_t version, uint8_t* dst, uint8_t size)
 	}
 
 	if (header.checksum != checksum)
-	{
 		return EEPROM_ERROR_CHECKSUM;
-	}
 
 	return EEPROM_OK;
 }
 
-static uint8_t write(uint8_t page, uint8_t version, uint8_t* src, uint8_t size)
+static uint8_t
+write(uint8_t page, uint8_t version, uint8_t* src, uint8_t size)
 {
 	uint8_t write_offset = 0;
 	uint8_t* ptr = 0;
@@ -343,22 +340,16 @@ static uint8_t write(uint8_t page, uint8_t version, uint8_t* src, uint8_t size)
 	header.checksum = 0;
 
 	if (!eeprom_select_page(page))
-	{
 		return EEPROM_ERROR_SELECT_PAGE;
-	}
 
 	if (!eeprom_erase_page())
-	{
 		return EEPROM_ERROR_ERASE;
-	}
 
 	write_offset += sizeof(header_t);
 
 	ptr = src;
-	for (i = 0; i < size; ++i)
-	{
-		if (!eeprom_write_byte(write_offset, *ptr))
-		{
+	for (i = 0; i < size; ++i) {
+		if (!eeprom_write_byte(write_offset, *ptr)) {
 			eeprom_end_write();
 			return EEPROM_ERROR_WRITE;
 		}
@@ -370,10 +361,8 @@ static uint8_t write(uint8_t page, uint8_t version, uint8_t* src, uint8_t size)
 
 	write_offset = 0;
 	ptr = (uint8_t*)&header;
-	for (i = 0; i < sizeof(header_t); ++i)
-	{
-		if (!eeprom_write_byte(write_offset, *ptr))
-		{
+	for (i = 0; i < sizeof(header_t); ++i) {
+		if (!eeprom_write_byte(write_offset, *ptr)) {
 			eeprom_end_write();
 			return EEPROM_ERROR_WRITE;
 		}

@@ -16,57 +16,63 @@
 
 static uint16_t selected_address;
 
-void eeprom_init(void)
+void
+eeprom_init(void)
 {
 	selected_address = EEPROM_START_ADDRESS;
 }
 
-bool eeprom_select_page(int page)
+bool
+eeprom_select_page(int page)
 {
-	if (page >= 0 && page < 2)
-	{
+
+	if (page >= 0 && page < 2) {
 		selected_address = EEPROM_START_ADDRESS + (page * 256);
 		return true;
 	}
-
 	return false;
 }
 
-int eeprom_read_byte(int offset)
+int
+eeprom_read_byte(int offset)
 {
-	uint8_t* address = (uint8_t*)(selected_address + offset);
+	uint8_t *address = (uint8_t *)(selected_address + offset);
+
 	return *address;
 }
 
-bool eeprom_erase_page(void)
+bool
+eeprom_erase_page(void)
 {
-	return true; // not needed
+	return true;	/* not needed */
 }
 
 bool eeprom_write_byte(int offset, uint8_t value)
 {
-	uint8_t* address = (uint8_t*)(selected_address + offset);
+	uint8_t *address = (uint8_t *)(selected_address + offset);
 
-	// disable flash write protection if enabled
-	if (!(FLASH->IAPSR & FLASH_IAPSR_DUL))
-	{
+	/* disable flash write protection if enabled */
+	if (!(FLASH->IAPSR & FLASH_IAPSR_DUL)) {
 		FLASH->DUKR = FLASH_RASS_KEY2;
 		FLASH->DUKR = FLASH_RASS_KEY1;
 
-		while (!(FLASH->IAPSR & FLASH_IAPSR_DUL));
+		while (!(FLASH->IAPSR & FLASH_IAPSR_DUL))
+			continue;
 	}
 
-	watchdog_yeild(); // :TODO: use faster api to write entire page
+	watchdog_yeild(); /* XXX :TODO: use faster api to write entire page */
 
 	*address = value;
-	while (!(FLASH->IAPSR & FLASH_IAPSR_EOP));
+	while (!(FLASH->IAPSR & FLASH_IAPSR_EOP))
+		continue;
 
 	return true;
 }
 
-bool eeprom_end_write(void)
+bool
+eeprom_end_write(void)
 {
-	// enable write protection
+	/* enable write protection */
 	FLASH->IAPSR &= ~FLASH_IAPSR_DUL;
 
 	return true;

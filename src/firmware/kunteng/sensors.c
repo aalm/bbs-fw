@@ -15,17 +15,17 @@
 #include "kunteng/pins.h"
 #include "kunteng/stm8s/stm8s_tim4.h"
 
-// interrupt runs at 100us interval, see timer4 setup in timers.c
+/* interrupt runs at 100us interval, see timer4 setup in timers.c */
 
-// :TODO: this file contains a lot of duplicated code from bbsx version, try to share code
+/* XXX :TODO: this file contains a lot of duplicated code from bbsx version, try to share code */
 
 #define PAS_SENSOR_NUM_SIGNALS			PAS_PULSES_REVOLUTION
-#define PAS_SENSOR_MIN_PULSE_MS_X10		50	// 500rpm limit
+#define PAS_SENSOR_MIN_PULSE_MS_X10		50	/* 500rpm limit */
 
-#define SPEED_SENSOR_MIN_PULSE_MS_X10	500
+#define SPEED_SENSOR_MIN_PULSE_MS_X10		500
 #define SPEED_SENSOR_TIMEOUT_MS_X10		25000
 
-
+#if /* XXX PAS */0
 static volatile uint16_t pas_pulse_counter;
 static volatile bool pas_direction_backward;
 static volatile uint16_t pas_period_length;	// pulse length counted in interrupt frequency (100us)
@@ -33,244 +33,185 @@ static uint16_t pas_period_counter;
 static bool pas_prev1;
 static bool pas_prev2;
 static uint16_t pas_stop_delay_periods;
+#endif
 
 static volatile uint16_t speed_ticks_period_length; // pulse length counted in interrupt frequency (100us)
 static uint16_t speed_period_counter;
 static bool speed_prev_state;
 static uint8_t speed_ticks_per_rpm;
 
-void sensors_init(void)
+volatile uint8_t brake_was_set = 0;
+volatile uint8_t brake_counter = 100;
+
+void
+sensors_init(void)
 {
+
+#if /* XXX PAS */0
 	pas_period_counter = 0;
 	pas_pulse_counter = 0;
 	pas_direction_backward = false;
 	pas_period_length = 0;
 	pas_stop_delay_periods = 1500;
+
+#endif
 	speed_period_counter = 0;
 	speed_ticks_period_length = 0;
 	speed_prev_state = false;
 	speed_ticks_per_rpm = 1;
 
-	// pins do not have external interrupt, use timer0 to evaluate state frequently
-	SET_PIN_INPUT(PIN_PAS1);
-	SET_PIN_INPUT(PIN_PAS2);
-	SET_PIN_INPUT(PIN_SPEED_SENSOR);
-	SET_PIN_INPUT_PULLUP(PIN_BRAKE);
-
-	pas_prev1 = GET_PIN_INPUT_STATE(PIN_PAS1);
-	pas_prev2 = GET_PIN_INPUT_STATE(PIN_PAS2);
-
+	/* pins do not have external interrupt, use timer4 to evaluate state frequently */
 	timer4_init_sensors();
 }
 
-void sensors_process(void)
+void
+sensors_process(void)
 {
+
+	/* process brake */
+	if (brake_was_set) {
+		if (brake_counter) {
+			brake_counter--;
+		} else {
+			brake_counter = 100;
+			SET_PIN_LOW(DBG_P3_IOT);
+			brake_was_set = 0;
+		}
+	}
 }
 
-bool torque_sensor_ok(void)
+bool
+torque_sensor_ok(void)
 {
 	return true;
 }
 
-void pas_set_stop_delay(uint16_t delay_ms)
+void
+pas_set_stop_delay(uint16_t delay_ms)
 {
-	pas_stop_delay_periods = delay_ms * 10;
+/* XXX	pas_stop_delay_periods = delay_ms * 10;*/
 }
 
-uint16_t pas_get_cadence_rpm_x10(void)
+uint16_t
+pas_get_cadence_rpm_x10(void)
 {
-	uint16_t tmp;
-	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupt
-	tmp = pas_period_length;
-	TIM4->IER |= TIM4_IT_UPDATE;
-
-	if (tmp > 0)
-	{
-		return (uint16_t)((6000000ul / PAS_SENSOR_NUM_SIGNALS) / tmp);
-	}
-	else
-	{
-		return 0;
-	}
+	return 0;
 }
 
-uint16_t pas_get_pulse_counter(void)
+uint16_t
+pas_get_pulse_counter(void)
 {
-	uint16_t tmp;
-	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupts
-	tmp = pas_pulse_counter;
-	TIM4->IER |= TIM4_IT_UPDATE;
-
-	return tmp;
+	return 0;
 }
 
-bool pas_is_pedaling_forwards(void)
+bool
+pas_is_pedaling_forwards(void)
 {
-	uint16_t period_length;
-	uint8_t direction_backward;
-	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupts
-	period_length = pas_period_length;
-	direction_backward = pas_direction_backward;
-	TIM4->IER |= TIM4_IT_UPDATE;
-
-	// atomic read operation, no need to disable timer interrupt
-	return period_length > 0 && !direction_backward;
+	return false;
 }
 
-bool pas_is_pedaling_backwards(void)
+bool
+pas_is_pedaling_backwards(void)
 {
-	uint16_t period_length;
-	uint8_t direction_backward;
-	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupts
-	period_length = pas_period_length;
-	direction_backward = pas_direction_backward;
-	TIM4->IER |= TIM4_IT_UPDATE;
-
-	return (period_length > 0) && direction_backward;
+	return false;
 }
 
-void speed_sensor_set_signals_per_rpm(uint8_t num_signals)
+void
+speed_sensor_set_signals_per_rpm(uint8_t num_signals)
 {
 	speed_ticks_per_rpm = num_signals;
 }
 
-bool speed_sensor_is_moving(void)
+bool
+speed_sensor_is_moving(void)
 {
 	uint16_t tmp;
-	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupts
+	TIM4->IER &= ~TIM4_IT_UPDATE;	/* disable timer4 interrupts */
 	tmp = speed_ticks_period_length;
 	TIM4->IER |= TIM4_IT_UPDATE;
 
 	return tmp > 0;
 }
 
-uint16_t speed_sensor_get_rpm_x10(void)
+uint16_t
+speed_sensor_get_rpm_x10(void)
 {
 	uint16_t tmp;
-	TIM4->IER &= ~TIM4_IT_UPDATE; // disable timer4 interrupts
+
+	TIM4->IER &= ~TIM4_IT_UPDATE;	/* disable timer4 interrupts */
 	tmp = speed_ticks_period_length;
 	TIM4->IER |= TIM4_IT_UPDATE;
 
 	if (tmp > 0)
-	{
 		return 6000000ul / tmp / speed_ticks_per_rpm;
-	}
-
 	return 0;
 }
 
-
-int16_t temperature_contr_x100(void)
+int16_t
+temperature_contr_x100(void)
 {
-	return 0; // n/a
+	return 0;
 }
 
-int16_t temperature_motor_x100(void)
+int16_t
+temperature_motor_x100(void)
 {
-	return 0; // n/a
+	return 0;
 }
 
-
-bool brake_is_activated(void)
+bool
+brake_is_activated(void)
 {
-	return !GET_PIN_INPUT_STATE(PIN_BRAKE);
+	return !GET_PIN_INPUT_STATE(BRAKE_IOT);
 }
 
-bool shift_sensor_is_activated(void)
+bool
+shift_sensor_is_activated(void)
 {
-	return false; // n/a
+	return false;
 }
 
-
-void isr_timer4_ovf(void) __interrupt(ITC_IRQ_TIM4_OVF)
+void
+isr_porta_exti(void) __interrupt(ITC_IRQ_PORTA)
 {
-	// clear interrupt bit
+	volatile bool brake = GET_PIN_INPUT_STATE(BRAKE_IOT) ? false : true;	/* active low */
+
+	if (brake) {
+		SET_PIN_HIGH(DBG_P3_IOT);
+		brake_was_set |= 0x01;
+	} else {
+		/* XXX to be cleared from main()-loop, for small delay/smoothness ? */
+		/* this is handled from sensors_process() */
+	}
+}
+
+void
+isr_timer4_ovf(void) __interrupt(ITC_IRQ_TIM4_OVF)
+{
+
+	/* XXX PAS was here */
+
+	/* Speed sensor */
+	volatile bool spd = GET_PIN_INPUT_STATE(SPEED_IOT);
+	if (spd && !speed_prev_state &&
+	    speed_period_counter > SPEED_SENSOR_MIN_PULSE_MS_X10) {
+		if (speed_period_counter <= SPEED_SENSOR_TIMEOUT_MS_X10)
+			speed_ticks_period_length = speed_period_counter;
+		else
+			speed_ticks_period_length = 0;
+
+		speed_period_counter = 0;
+	} else {
+		/* Do not allow wraparound or computed speed will wrong after bike has been still. */
+		if (speed_period_counter < 65535)
+			speed_period_counter++;
+
+		if (speed_period_counter > SPEED_SENSOR_TIMEOUT_MS_X10 &&
+		    speed_ticks_period_length > 0)
+			speed_ticks_period_length = 0;
+	}
+	speed_prev_state = spd;
+
+	/* clear interrupt bit */
 	TIM4->SR1 &= (uint8_t)(~TIM4_IT_UPDATE);
-
-	// Pas
-	{
-		bool pas1 = GET_PIN_INPUT_STATE(PIN_PAS1);
-		bool pas2 = GET_PIN_INPUT_STATE(PIN_PAS2);
-
-		if (pas1 && !pas_prev1 /* && pas_period_counter > PAS_SENSOR_MIN_PULSE_MS_X10 */)
-		{
-			pas_pulse_counter++;
-
-			if (pas_direction_backward != pas2)
-			{
-				pas_direction_backward = pas2;
-
-				// Reset pas pulse counter if pedal direction is changed,
-				// this variable counts the number of pulses since start of pedaling session.
-				pas_pulse_counter = 0;
-			}
-
-			if (pas_period_counter > 0)
-			{
-				if (pas_period_counter <= pas_stop_delay_periods)
-				{
-					pas_period_length = pas_period_counter; // save in order to be able to calculate rpm when needed
-				}
-				else
-				{
-					pas_period_length = 0;
-				}
-
-				pas_period_counter = 0;
-			}
-		}
-		else
-		{
-			// Do not allow wraparound or computed pedaling cadence will wrong after pedals has been still.
-			if (pas_period_counter < 65535)
-			{
-				pas_period_counter++;
-			}
-
-			if (pas_period_length > 0 && pas_period_counter > pas_stop_delay_periods)
-			{
-				pas_period_length = 0;
-				pas_pulse_counter = 0;
-				pas_direction_backward = false;
-			}
-		}
-
-		pas_prev1 = pas1;
-		pas_prev2 = pas2;
-	}
-
-
-	// Speed sensor
-	{
-		bool spd = GET_PIN_INPUT_STATE(PIN_SPEED_SENSOR);
-
-		if (spd && !speed_prev_state && speed_period_counter > SPEED_SENSOR_MIN_PULSE_MS_X10)
-		{
-			if (speed_period_counter <= SPEED_SENSOR_TIMEOUT_MS_X10)
-			{
-				speed_ticks_period_length = speed_period_counter;
-			}
-			else
-			{
-				speed_ticks_period_length = 0;
-			}
-
-			speed_period_counter = 0;
-		}
-		else
-		{
-			// Do not allow wraparound or computed speed will wrong after bike has been still.
-			if (speed_period_counter < 65535)
-			{
-				speed_period_counter++;
-			}
-
-			if (speed_ticks_period_length > 0 && speed_period_counter > SPEED_SENSOR_TIMEOUT_MS_X10)
-			{
-				speed_ticks_period_length = 0;
-			}
-		}
-
-		speed_prev_state = spd;
-	}
 }

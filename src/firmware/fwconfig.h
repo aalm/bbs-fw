@@ -14,13 +14,11 @@
 	#define HAS_MOTOR_TEMP_SENSOR				0
 #endif
 
-
 #if defined(BBSHD) || defined(BBS02)
 	#define HAS_CONTROLLER_TEMP_SENSOR			1
 #else
 	#define HAS_CONTROLLER_TEMP_SENSOR			0
 #endif
-
 
 #if defined(TSDZ2)
 	#define HAS_TORQUE_SENSOR					1
@@ -51,6 +49,13 @@
 	#define PAS_PULSES_REVOLUTION				20
 #elif defined(KUNTENG)
 	#define PAS_PULSES_REVOLUTION				6/* XXX */
+#endif
+
+#if defined(KUNTENG)
+	/* XXX kunteng has lights, but i'm using the output for debug atm. */
+	#define HAS_LIGHTS				0
+#else
+	#define HAS_LIGHTS				1
 #endif
 
  // Applied to both motor and controller tmeperature sensor
